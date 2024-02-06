@@ -6,7 +6,7 @@ Elize can be used to implement in a fun Dart or Flutter project.
 
 ## Getting started
 
-Install the package, import the library and you're goot to go.
+Install the package, import the library and you're good to go.
 
 ## Usage
 

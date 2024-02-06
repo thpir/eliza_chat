@@ -5,26 +5,29 @@ import 'package:eliza_chat/src/models/eliza_decomp.dart';
 import 'package:eliza_chat/src/models/eliza_key.dart';
 
 class Eliza {
-  late List<String> initials;
-  late List<String> finals;
-  late List<String> quits;
-  late Map<String, List<String>> pres;
-  late Map<String, List<String>> posts;
-  late Map<String, List<String>> synons;
-  late Map<String, ElizaKey> keys;
-  late List<List<String>> memory;
+  late List<String> _initials;
+  late List<String> _finals;
+  late List<String> _quits;
+  late Map<String, List<String>> _pres;
+  late Map<String, List<String>> _posts;
+  late Map<String, List<String>> _synons;
+  late Map<String, ElizaKey> _keys;
+  late List<List<String>> _memory;
 
+  /// Constructor for the Eliza class.
   Eliza() {
-    initials = [];
-    finals = [];
-    quits = [];
-    pres = {};
-    posts = {};
-    synons = {};
-    keys = {};
-    memory = [];
+    _initials = [];
+    _finals = [];
+    _quits = [];
+    _pres = {};
+    _posts = {};
+    _synons = {};
+    _keys = {};
+    _memory = [];
   }
 
+  /// Initializes the chatbot by parsing the doctor script and populating 
+  /// internal data structures.
   init() {
     String word = "";
     for (String line in doctor) {
@@ -32,39 +35,39 @@ class Eliza {
         continue;
       }
 
-      // Preprocess line
+      /// Preprocess line
       final parts = line.split(':').map((part) => part.trim()).toList();
       final tag = parts[0];
       final content = parts[1];
 
       switch (tag) {
         case 'initial':
-          initials.add(content);
+          _initials.add(content);
           break;
         case 'final':
-          finals.add(content);
+          _finals.add(content);
           break;
         case 'quit':
-          quits.add(content);
+          _quits.add(content);
           break;
         case 'pre':
           final preParts = content.split(' ');
-          pres[preParts[0]] = preParts.sublist(1);
+          _pres[preParts[0]] = preParts.sublist(1);
           break;
         case 'post':
           final postParts = content.split(' ');
-          posts[postParts[0]] = postParts.sublist(1);
+          _posts[postParts[0]] = postParts.sublist(1);
           break;
         case 'synon':
           final synonParts = content.split(' ');
-          synons[synonParts[0]] = synonParts;
+          _synons[synonParts[0]] = synonParts;
           break;
         case 'key':
           final keyParts = content.split(' ');
           word = keyParts[0];
           final weight = keyParts.length > 1 ? int.parse(keyParts[1]) : 1;
           ElizaKey key = ElizaKey(word, weight, []);
-          keys[word] = key;
+          _keys[word] = key;
           break;
         case 'decomp':
           final decompParts = content.split(' ');
@@ -74,61 +77,65 @@ class Eliza {
             decompParts.removeAt(0);
           }
           ElizaDecomp decomp = ElizaDecomp(decompParts, save, []);
-          keys[word]!.decomps.add(decomp);
+          _keys[word]!.decomps.add(decomp);
           break;
         case 'reasmb':
           final reasmbParts = content.split(' ');
-          keys[word]!.decomps.last.reasmbs.add(reasmbParts);
+          _keys[word]!.decomps.last.reasmbs.add(reasmbParts);
           break;
       }
     }
   }
 
+  /// Responds to the user input by generating an appropriate ELIZA-like 
+  /// response.
   String? _respond(String text) {
-    // Check if the input text is a quit command, and if so, return null
-    if (quits.contains(text.toLowerCase())) {
+    /// Check if the input text is a quit command, and if so, return null
+    if (_quits.contains(text.toLowerCase())) {
       return null;
     }
-    // Perform punctuation cleanup in the input text
+    /// Perform punctuation cleanup in the input text
     text = text.replaceAll(RegExp(r'\s*\.\s*'), ' . ');
     text = text.replaceAll(RegExp(r'\s*,\s*'), ' , ');
     text = text.replaceAll(RegExp(r'\s*;\s*'), ' ; ');
-    // Tokenize the input text into a list of words
+    /// Tokenize the input text into a list of words
     List<String> words = text.split(' ').where((w) => w.isNotEmpty).toList();
-    // Substitute words based on predefined patterns (pre-substitution)
-    words = _sub(words, pres);
-    // Find keys (potential trigger words) in the input and sort them by weight
+    /// Substitute words based on predefined patterns (pre-substitution)
+    words = _sub(words, _pres);
+    /// Find keys (potential trigger words) in the input and sort them by weight
     List<ElizaKey> keyList = [];
     for (String word in words) {
-      if (keys.containsKey(word.toLowerCase())) {
-        keyList.add(keys[word.toLowerCase()]!);
+      if (_keys.containsKey(word.toLowerCase())) {
+        keyList.add(_keys[word.toLowerCase()]!);
       }
     }
     keyList.sort((a, b) => b.weight.compareTo(a.weight));
-    // Initialize output to an empty list
+    /// Initialize output to an empty list
     List<String>? output;
-    // Loop through the sorted keys and try to match the input against each key
+    /// Loop through the sorted keys and try to match the input against each key
     for (ElizaKey key in keyList) {
       output = _matchKey(words, key);
-      // If a match is found, break the loop
+      /// If a match is found, break the loop
       if (output != null) {
         break;
       }
     }
-    // If no output is generated from the keys, check memory for a stored response
+    /// If no output is generated from the keys, check memory for a stored 
+    /// response
     if (output == null) {
-      if (memory.isNotEmpty) {
-        int index = Random().nextInt(memory.length);
-        output = memory.removeAt(index);
+      if (_memory.isNotEmpty) {
+        int index = Random().nextInt(_memory.length);
+        output = _memory.removeAt(index);
       } else {
-        // If still no output, use a default response from xnone key
-        output = _nextReasmb(keys['xnone']!.decomps[0]);
+        /// If still no output, use a default response from xnone key
+        output = _nextReasmb(_keys['xnone']!.decomps[0]);
       }
     }
-    // Join the output words into a string and return the response
+    /// Join the output words into a string and return the response
     return output.join(' ');
   }
 
+  /// Performs word substitution based on predefined patterns.
   List<String> _sub(List<String> words, Map<String, List<String>> sub) {
     List<String> output = [];
     for (String word in words) {
@@ -142,24 +149,25 @@ class Eliza {
     return output;
   }
 
+  /// Matches the user input against a given key (potential trigger word).
   List<String>? _matchKey(List<String> words, ElizaKey key) {
     for (ElizaDecomp decomp in key.decomps) {
       List<List<String>>? results = _matchDecomp(decomp.parts, words);
       if (results == null) {
         continue;
       }
-      results = results.map((words) => _sub(words, posts)).toList();
+      results = results.map((words) => _sub(words, _posts)).toList();
       List<String> reasmb = _nextReasmb(decomp);
       if (reasmb[0] == 'goto') {
         String gotoKey = reasmb[1];
-        if (!keys.containsKey(gotoKey)) {
+        if (!_keys.containsKey(gotoKey)) {
           throw ArgumentError('Invalid goto key $gotoKey');
         }
-        return _matchKey(words, keys[gotoKey]!);
+        return _matchKey(words, _keys[gotoKey]!);
       }
       List<String> output = _reassemble(reasmb, results);
       if (decomp.save) {
-        memory.add(output);
+        _memory.add(output);
         continue;
       }
       return output;
@@ -167,6 +175,7 @@ class Eliza {
     return null;
   }
 
+  /// Retrieves the next reassembly string from the given decomp structure.
   List<String> _nextReasmb(ElizaDecomp decomp) {
     int index = decomp.nextReasmbIndex;
     List<String> result = decomp.reasmbs[index % decomp.reasmbs.length];
@@ -174,6 +183,8 @@ class Eliza {
     return result;
   }
 
+  /// Recursively matches decomposition parts with user input and generates 
+  /// results.
   bool _matchDecompR(
       List<String> parts, List<String> words, List<List<String>> results) {
     if (parts.isEmpty && words.isEmpty) {
@@ -193,10 +204,10 @@ class Eliza {
       return false;
     } else if (parts[0].startsWith('@')) {
       String root = parts[0].substring(1);
-      if (!synons.containsKey(root)) {
+      if (!_synons.containsKey(root)) {
         throw ArgumentError('Unknown synonym root $root');
       }
-      if (!synons[root]!.contains(words[0].toLowerCase())) {
+      if (!_synons[root]!.contains(words[0].toLowerCase())) {
         return false;
       }
       results.add([words[0]]);
@@ -208,6 +219,7 @@ class Eliza {
     }
   }
 
+  /// Matches decomposition parts with user input and generates results.
   List<List<String>>? _matchDecomp(List<String> parts, List<String> words) {
     List<List<String>> results = [];
     if (_matchDecompR(parts, words, results)) {
@@ -216,6 +228,7 @@ class Eliza {
     return null;
   }
 
+  /// Reassembles the response based on reassembly strings and matched results.
   List<String> _reassemble(List<String> reasmb, List<List<String>> results) {
     List<String> output = [];
     for (String reword in reasmb) {
@@ -241,14 +254,17 @@ class Eliza {
     return output;
   }
 
+  /// Retrieves a random initial greeting.
   String getInitial() {
-    return initials[Random().nextInt(initials.length)];
+    return _initials[Random().nextInt(_initials.length)];
   }
 
+  /// Retrieves a random final farewell.
   String getFinal() {
-    return finals[Random().nextInt(finals.length)];
+    return _finals[Random().nextInt(_finals.length)];
   }
 
+  /// Processes user input and returns the generated ELIZA-like response.
   String? processInput(String input) {
     return _respond(input);
   }

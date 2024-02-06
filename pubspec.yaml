@@ -1,7 +1,7 @@
 name: eliza_chat
 description: A Dart version of the classic Eliza chatbot.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/thpir/eliza_chat
 
 environment:
   sdk: ^3.2.2
