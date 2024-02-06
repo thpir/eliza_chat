@@ -1,0 +1,11 @@
+Welcome to
+              EEEEEE  LL      IIII  ZZZZZZZ   AAAAA
+              EE      LL       II       ZZ   AA   AA
+              EEEEEE  LL       II     ZZZ    AAAAAAA
+              EE      LL       II    ZZ      AA   AA
+              EEEEEE  LLLLLL  IIII  ZZZZZZZ  AA   AA
+
+Eliza is a mock Rogerian psychotherapist.
+The original program was described by Joseph Weizenbaum in 1966.
+This implementation by Thijs Pirmez 2024.
+

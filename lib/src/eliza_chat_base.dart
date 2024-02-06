@@ -26,9 +26,9 @@ class Eliza {
     _memory = [];
   }
 
-  /// Initializes the chatbot by parsing the doctor script and populating 
+  /// Initializes the chatbot by parsing the doctor script and populating
   /// internal data structures.
-  init() {
+  String init() {
     String word = "";
     for (String line in doctor) {
       if (line.trim().isEmpty) {
@@ -85,23 +85,28 @@ class Eliza {
           break;
       }
     }
+    return ("Welcome to\n              EEEEEE  LL      IIII  ZZZZZZZ   AAAAA\n              EE      LL       II       ZZ   AA   AA\n              EEEEEE  LL       II     ZZZ    AAAAAAA\n              EE      LL       II    ZZ      AA   AA\n              EEEEEE  LLLLLL  IIII  ZZZZZZZ  AA   AA\n\nEliza is a mock Rogerian psychotherapist.\nThe original program was described by Joseph Weizenbaum in 1966.\nThis implementation by Thijs Pirmez 2024.\n");
   }
 
-  /// Responds to the user input by generating an appropriate ELIZA-like 
+  /// Responds to the user input by generating an appropriate ELIZA-like
   /// response.
   String? _respond(String text) {
     /// Check if the input text is a quit command, and if so, return null
     if (_quits.contains(text.toLowerCase())) {
       return null;
     }
+
     /// Perform punctuation cleanup in the input text
     text = text.replaceAll(RegExp(r'\s*\.\s*'), ' . ');
     text = text.replaceAll(RegExp(r'\s*,\s*'), ' , ');
     text = text.replaceAll(RegExp(r'\s*;\s*'), ' ; ');
+
     /// Tokenize the input text into a list of words
     List<String> words = text.split(' ').where((w) => w.isNotEmpty).toList();
+
     /// Substitute words based on predefined patterns (pre-substitution)
     words = _sub(words, _pres);
+
     /// Find keys (potential trigger words) in the input and sort them by weight
     List<ElizaKey> keyList = [];
     for (String word in words) {
@@ -110,17 +115,21 @@ class Eliza {
       }
     }
     keyList.sort((a, b) => b.weight.compareTo(a.weight));
+
     /// Initialize output to an empty list
     List<String>? output;
+
     /// Loop through the sorted keys and try to match the input against each key
     for (ElizaKey key in keyList) {
       output = _matchKey(words, key);
+
       /// If a match is found, break the loop
       if (output != null) {
         break;
       }
     }
-    /// If no output is generated from the keys, check memory for a stored 
+
+    /// If no output is generated from the keys, check memory for a stored
     /// response
     if (output == null) {
       if (_memory.isNotEmpty) {
@@ -131,6 +140,7 @@ class Eliza {
         output = _nextReasmb(_keys['xnone']!.decomps[0]);
       }
     }
+
     /// Join the output words into a string and return the response
     return output.join(' ');
   }
@@ -183,7 +193,7 @@ class Eliza {
     return result;
   }
 
-  /// Recursively matches decomposition parts with user input and generates 
+  /// Recursively matches decomposition parts with user input and generates
   /// results.
   bool _matchDecompR(
       List<String> parts, List<String> words, List<List<String>> results) {
@@ -269,6 +279,3 @@ class Eliza {
     return _respond(input);
   }
 }
-
-
-

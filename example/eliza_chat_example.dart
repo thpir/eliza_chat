@@ -4,7 +4,8 @@ import 'package:eliza_chat/eliza_chat.dart';
 
 void main() {
   var eliza = Eliza();
-  eliza.init();
+  var intro = eliza.init();
+  print(intro);
   print(eliza.getInitial());
 
   while (true) {
@@ -12,7 +13,7 @@ void main() {
     var input = stdin.readLineSync();
     if (input == null) {
       break;
-    } 
+    }
     var output = eliza.processInput(input);
     if (output == null) {
       break;
