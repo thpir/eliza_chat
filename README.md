@@ -17,8 +17,9 @@ import 'package:eliza_chat/eliza_chat.dart';
 
 void main() {
   var eliza = Eliza();
-  eliza.init();
-  print(eliza.initials);
+  var intro = eliza.init();
+  print(intro);
+  print(eliza.getInitial());
 
   while (true) {
     stdout.write("You: ");
@@ -26,10 +27,16 @@ void main() {
     if (input == null) {
       break;
     }
-    print("Eliza: ${eliza.processInput(input)}");
+    var output = eliza.processInput(input);
+    if (output == null) {
+      break;
+    }
+    print("Eliza: $output");
   }
+  print(eliza.getFinal());
 }
 ```
 
 ## Additional information
 
+![A screenshot of the example code](/screenshot.png)

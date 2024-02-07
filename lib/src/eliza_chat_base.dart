@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:eliza_chat/src/data/doctor.dart';
-import 'package:eliza_chat/src/models/eliza_decomp.dart';
+import 'package:eliza_chat/src/models/decomposition_rule.dart';
 import 'package:eliza_chat/src/models/eliza_key.dart';
 
 class Eliza {
@@ -76,7 +76,7 @@ class Eliza {
             save = true;
             decompParts.removeAt(0);
           }
-          ElizaDecomp decomp = ElizaDecomp(decompParts, save, []);
+          DecompositionRule decomp = DecompositionRule(decompParts, save, []);
           _keys[word]!.decomps.add(decomp);
           break;
         case 'reasmb':
@@ -161,7 +161,7 @@ class Eliza {
 
   /// Matches the user input against a given key (potential trigger word).
   List<String>? _matchKey(List<String> words, ElizaKey key) {
-    for (ElizaDecomp decomp in key.decomps) {
+    for (DecompositionRule decomp in key.decomps) {
       List<List<String>>? results = _matchDecomp(decomp.parts, words);
       if (results == null) {
         continue;
@@ -186,7 +186,7 @@ class Eliza {
   }
 
   /// Retrieves the next reassembly string from the given decomp structure.
-  List<String> _nextReasmb(ElizaDecomp decomp) {
+  List<String> _nextReasmb(DecompositionRule decomp) {
     int index = decomp.nextReasmbIndex;
     List<String> result = decomp.reasmbs[index % decomp.reasmbs.length];
     decomp.nextReasmbIndex = index + 1;

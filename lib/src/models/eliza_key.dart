@@ -1,9 +1,9 @@
-import 'package:eliza_chat/src/models/eliza_decomp.dart';
+import 'package:eliza_chat/src/models/decomposition_rule.dart';
 
 class ElizaKey {
   String word;
   int weight;
-  List<ElizaDecomp> decomps;
+  List<DecompositionRule> decomps;
 
   ElizaKey(this.word, this.weight, this.decomps);
 }
