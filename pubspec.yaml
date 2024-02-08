@@ -1,6 +1,6 @@
 name: eliza_chat
 description: A Dart version of the classic Eliza chatbot. Eliza chat is a dart implementation of the ELIZA chatbot designed by Joseph Weizenbaum, in the sixties. ELIZA was one of the first chatbots that ever existed.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/thpir/eliza_chat
 
 environment:
