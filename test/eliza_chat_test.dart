@@ -7,7 +7,6 @@ void main() {
 
     setUp(() {
       eliza = Eliza();
-      eliza.init();
     });
 
     test('Initial and Final Phrases', () {

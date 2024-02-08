@@ -24,11 +24,12 @@ class Eliza {
     _synons = {};
     _keys = {};
     _memory = [];
+    _init();
   }
 
   /// Initializes the chatbot by parsing the doctor script and populating
   /// internal data structures.
-  String init() {
+  _init() {
     String word = "";
     for (String line in doctor) {
       if (line.trim().isEmpty) {
@@ -85,6 +86,9 @@ class Eliza {
           break;
       }
     }
+  }
+
+  String getHeader() {
     return ("Welcome to\n              EEEEEE  LL      IIII  ZZZZZZZ   AAAAA\n              EE      LL       II       ZZ   AA   AA\n              EEEEEE  LL       II     ZZZ    AAAAAAA\n              EE      LL       II    ZZ      AA   AA\n              EEEEEE  LLLLLL  IIII  ZZZZZZZ  AA   AA\n\nEliza is a mock Rogerian psychotherapist.\nThe original program was described by Joseph Weizenbaum in 1966.\nThis implementation by Thijs Pirmez 2024.\n");
   }
 

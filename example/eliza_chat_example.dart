@@ -4,8 +4,7 @@ import 'package:eliza_chat/eliza_chat.dart';
 
 void main() {
   var eliza = Eliza();
-  var intro = eliza.init();
-  print(intro);
+  print(eliza.getHeader());
   print(eliza.getInitial());
 
   while (true) {

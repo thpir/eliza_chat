@@ -2,7 +2,7 @@ Eliza chat is a dart implementation of the ELIZA chatbot designed by Joseph Weiz
 
 ## Features
 
-Elize can be used to implement in a fun Dart or Flutter project.
+Eliza can be used to implement in a fun Dart or Flutter project.
 
 ## Getting started
 
@@ -17,8 +17,7 @@ import 'package:eliza_chat/eliza_chat.dart';
 
 void main() {
   var eliza = Eliza();
-  var intro = eliza.init();
-  print(intro);
+  print(eliza.getHeader());
   print(eliza.getInitial());
 
   while (true) {
@@ -38,5 +37,35 @@ void main() {
 ```
 
 ## Additional information
+
+- To start using the package, create an instance of the Eliza class
+
+```dart
+var eliza = Eliza();
+```
+
+- To get the old school header from the original ELIZA, use the getHeader() method. This method returns a String value:
+
+```dart
+eliza.getHeader();
+```
+
+- To get the introduction text from ELIZA, use the getInitial() method. This method returns a String value:
+
+```dart
+eliza.getInitial();
+```
+
+- To process the user its question, use the processInput() method. This method returns a String? value:
+
+```dart
+eliza.processInput(input);
+```
+
+- processInput() CAN return a null value. If the user types "bye", "goodbye" or "quit", Eliza knows you want to terminate the conversation and will return a null value instead. By checking for a null value you can get confirmation that Eliza received the stop command and you get ask for a final sentence. The getFinal method returns a String value:
+
+```dart
+eliza.getFinal();
+```
 
 ![A screenshot of the example code](/screenshot.png)
